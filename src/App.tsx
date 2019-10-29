@@ -1,6 +1,8 @@
 import React, { useState, useEffect} from 'react';
 import './App.css';
 import {AccessApi} from './api';
+import {getList} from './api/wiki';
+
 const axios = require('axios');
 
 const App: React.FC = () => {
@@ -10,9 +12,10 @@ const App: React.FC = () => {
     // const SECRET = 'ae2ec044a28288db7b9452b40e17e6ac';
     // const result = axios.get(`/cgi-bin/token?grant_type=client_credential&appid=${APPID}&secret=${SECRET}`);
     // console.log(result);
-    AccessApi.getAccessToken().then(accesstoken => {
-      setValue(accesstoken);
-    });
+    // AccessApi.getAccessToken().then(accesstoken => {
+    //   setValue(accesstoken);
+    // });
+    getList();
   });
   let updateDate = function () {
     const date = new Date();
