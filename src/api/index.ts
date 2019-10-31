@@ -1,5 +1,7 @@
 import * as AccessApi from './access';
+import * as WikiApi from './wiki';
 
 export {
-    AccessApi
+    AccessApi,
+    WikiApi
 }

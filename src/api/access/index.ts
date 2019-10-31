@@ -1,6 +1,16 @@
+import { message } from 'antd';
 import { GET_ACCESS_TOKEN } from '../url';
 import { appId, Secret } from '../../config';
+import request from '../request';
+import { string } from 'prop-types';
 const axios = require('axios');
+
+const AccessTokenErrors = new Map<number, string>();
+AccessTokenErrors.set(-1, "系统繁忙，此时请开发者稍候再试");
+AccessTokenErrors.set(0, "请求成功");
+AccessTokenErrors.set(40001, "AppSecret 错误或者 AppSecret 不属于这个小程序，请开发者确认 AppSecret 的正确性");
+AccessTokenErrors.set(40002, "请确保 grant_type 字段值为 client_credential");
+AccessTokenErrors.set(40013, "不合法的 AppID，请开发者检查 AppID 的正确性，避免异常字符，注意大小写");
 
 interface TokenValue {
     token: string;
@@ -9,63 +19,62 @@ interface TokenValue {
 
 // 获取接口调用凭据
 const getAccessToken = async (): Promise<string> => {
-    const value: string | null = localStorage.getItem("AccessToken");
-    if( value === null ) {
-        fetchGetAccessToken().then(token => {
-
-        }).catch( error => {
-            console.log("接口调用凭据出错", error);
-        })
+    const access = getLocal();
+    let token: string = '';
+    if(access === null) {
+        const fetch_token = await fetchGetAccessToken();
+        token = fetch_token;
+    } else {
+        token = access.token;
     }
-    const obj: TokenValue = JSON.parse(value as string);
-    const {token, expires} = obj;
-    if(new Date().getTime() > expires) {
-        console.log("access_token已过期");
-        fetchGetAccessToken().then(token => {
-
-        }).catch( error => {
-            console.log("接口调用凭据出错", error);
-        })
-    }
-    return obj.token;
+    return token;
 };
 
 // 从腾讯服务器获取调用凭据
 const fetchGetAccessToken = async (): Promise<string> => {
     const now: number = new Date().getTime();
-    const response = await axios.get(GET_ACCESS_TOKEN, {
-        params: {
-            // appid: appId,
-            // secret: Secret,
-            // grant_type: 'client_credential'
+    let result: string = "";
+    const data = await request.get(GET_ACCESS_TOKEN, {
+            appid: appId,
+            secret: Secret,
+            grant_type: 'client_credential'
         }
-    });
-    console.log("接口调用凭据", response);
-    const { data, status, statusText } = response;   
+    );
     const { access_token, expires_in, errcode, errmsg } = data;
-    if (status !== 200 || statusText !== "OK") {
-        throw new Error('error');
+    if (errcode && errcode !== 0) {
+        const errorTxt = AccessTokenErrors.get(errcode) || errmsg;
+        message.error(errorTxt);
+        throw new Error(errorTxt);
+    } else {
+        setLocal(access_token, now + (expires_in * 1000));
+        result = access_token;
     }
-    if(errcode !== 0 || errmsg !== "ok") {
-        throw new Error(`${errcode}: ${errmsg}`);
+    return result;
+};
+// 从localStorage获取调用凭据
+const getLocal = (): TokenValue | null => {
+    let value: string | null = localStorage.getItem("AccessToken");
+    value = value || "null";
+    const obj: TokenValue | null = JSON.parse(value);
+    if ( obj === null )
+        return null;
+    const {expires, token } = obj;
+    if( overExpires(expires) ) {
+        return null;
     }
+    return obj;
+}
+// 存入localStorage
+const setLocal = (token: string, expires: number): void => {
     localStorage.setItem("AccessToken", JSON.stringify({
-        token: access_token,
-        expires: now + (expires_in * 1000)
-    }));  
-    return access_token;
+        token: token,
+        expires: expires
+    })); 
 };
-
-const getTokenExpires = (): string => {
-    const value: string | null = localStorage.getItem("time");
-    const obj: TokenValue = JSON.parse(value as string);
-    return obj.token;
-    // let date = new Date(value);
-    // date.setHours(date.getHours() + 2);
-    // return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-};
-
+// 判断是否超时
+const overExpires = (expires: number) => {
+    return new Date().getTime() > expires;
+}
 export {
-    getTokenExpires,
     getAccessToken
 };

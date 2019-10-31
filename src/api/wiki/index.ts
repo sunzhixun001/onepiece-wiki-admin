@@ -1,18 +1,25 @@
 import { getAccessToken } from '../access';
-const axios = require('axios');
+import request from '../request';
 
-const getList = () => {
-    getAccessToken().then(token => {
-        axios.post("/tcb/databasequery?access_token=" + token, {
-            env: 'develop-6e54e7',
-            query: 'db.collection(\"wikis\").limit(10).skip(1).get()'
-        }).then(function(response: any) {
-            console.log(response);
-        })
-    })
+const getWikiList = async (limit: number, skip: number) => {
+    const token = await getAccessToken();
+    const response = await request.post("/tcb/databasequery?access_token=" + token, {
+        env: 'develop-6e54e7',
+        query: `db.collection("wikis").limit(${limit}).skip(${skip}).get()`
+    });
+    const { data, errcode, errmsg } = response;
+    return data;
+    // .then(token => {
+    //     request.post("/tcb/databasequery?access_token=" + token, {
+    //         env: 'develop-6e54e7',
+    //         query: `db.collection("wikis").limit(${limit}).skip(${skip}).get()`
+    //     }).then(function(response: any) {
+    //         console.log(response);
+    //     })
+    // })
     
 }
 
 export {
-    getList
+    getWikiList
 }
