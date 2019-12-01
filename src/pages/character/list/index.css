@@ -1,0 +1,13 @@
+.character-wrap {
+  margin-top: 0;
+}
+
+.character-wrap .item-list .item-list-main {
+  padding-right: 20px;
+}
+
+.character-wrap .detail {
+  width: 50%;
+  padding-top: 24px;
+  background: #FFFFFF;
+}

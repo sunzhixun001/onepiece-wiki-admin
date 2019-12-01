@@ -7,11 +7,14 @@ import {
   Route,
   Link
 } from 'react-router-dom';
-import { renderRoutes } from "react-router-config";
+import { renderRoutes, RouteConfig, RouteConfigComponentProps } from "react-router-config";
 
 const axios = require('axios');
 
-const App: React.FC = () => {
+interface Props {
+  route : {routes: RouteConfig[] | undefined};
+}
+const App: React.FC<RouteConfigComponentProps<any>> = ({ route }) => {
   const [value, setValue] = useState('');
   useEffect(() => {
     // AccessApi.getAccessToken().then(accesstoken => {

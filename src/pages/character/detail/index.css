@@ -1,0 +1,39 @@
+.character-detail-main {
+  padding-right: 20px;
+}
+
+.avator {
+  width: 100px;
+  height: 100px;
+}
+
+.img-box {
+  height: 200px;
+  overflow: hidden;
+}
+
+.img-box img {
+  width: 100%;
+}
+
+.character-detail-group .group-item {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.character-detail-group .group-item i {
+  margin-left: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.character-detail-relationship {
+  display: inline;
+}
+
+.add-relationship button,
+.add-group button {
+  border: dashed 1px gray;
+  width: 100%;;
+}
+
