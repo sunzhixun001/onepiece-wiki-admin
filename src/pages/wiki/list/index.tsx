@@ -17,6 +17,7 @@ import {
 import { renderRoutes, RouteConfig, RouteConfigComponentProps } from "react-router-config";
 import { WikiListItem, WikiGetDocResponseValue, WikiGetDocResponseEmptyObject, WikiUpdateRequestValue } from '../../../interface/wiki';
 import WikiDetailScreen from '../detail';
+import { resolve } from 'dns';
 
 const WikiListView: React.FC<RouteConfigComponentProps<any>> = ({ route }) => {
     const [list, setList] = useState<WikiListItem[]>([]); 
@@ -26,6 +27,14 @@ const WikiListView: React.FC<RouteConfigComponentProps<any>> = ({ route }) => {
     const [detail, setDetail] = useState<WikiGetDocResponseValue>(WikiGetDocResponseEmptyObject);
     let history = useHistory();
     useEffect(() => {
+        new Promise((resolve, reject) => {
+            // throw Error('sb');
+            reject('sb');
+        }).then(result => {
+
+        }).catch(err => {
+            alert(err);
+        });
         fetchGetWikiList(1);
     }, []);
     const fetchGetWikiList = (pageindex: number) => {
