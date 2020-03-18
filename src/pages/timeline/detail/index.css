@@ -1,0 +1,28 @@
+.tag-item {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.tag-item input {
+  width: 100px;
+  margin-right: 20px;
+}
+
+.tag-item .icon {
+  display: flex;
+  align-items: center;
+}
+
+.character_list {
+  display: flex;
+}
+
+.character_list .character_item {
+  width: 100px;
+  height: 100px;
+  margin-right: 10px;
+}
+
+.character_list .character_item .avator {
+  width: 100%;
+}
