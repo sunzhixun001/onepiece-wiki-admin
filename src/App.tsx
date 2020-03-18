@@ -1,6 +1,6 @@
 import React, { useState, useEffect} from 'react';
 import './App.css';
-import routers from './pages/router-config';
+import routers from './router';
 import {
   BrowserRouter as Router,
   Switch,
