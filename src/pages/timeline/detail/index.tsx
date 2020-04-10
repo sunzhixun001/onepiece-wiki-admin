@@ -1,19 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ReactElement, useCallback } from 'react';
 import { RouteComponentProps } from 'react-router';
 import { TimelineApi } from '../../../api';
 import {
   Form,
   Input,
-  Icon,
   Button,
   message,
   Drawer
 } from 'antd';
+import {
+  CloseCircleOutlined,
+  PlusCircleOutlined
+} from '@ant-design/icons';
 import "./index.css";
 import { getDownloadUrl } from '../../../utils/common';
 import { TimelinePut, Timeline, TimelineDownloadPhoto } from '../../../interface/timeline';
 import { Character, CharacterRelationshipDownload } from '../../../interface/character';
 import SearchCharacter from '../../../components/common/search-character';
+import { Tags } from './components';
 
 interface Props {
   id: string,
@@ -43,7 +47,7 @@ const TimelineDeatilScreen = (props: Props) => {
     const index = parseInt(event.currentTarget.getAttribute("data-index") || '0');
     setTags(tags.filter((t, i) => i !== index));
   };
-  const onTagChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onTagChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const index = parseInt(event.currentTarget.getAttribute("data-index") || '0');
     const value = event.target.value;
     setTags(tags.map((t, i) => {
@@ -53,7 +57,15 @@ const TimelineDeatilScreen = (props: Props) => {
         return t;
       }
     }));
-  };
+  }, [tags]);
+  // 点击删除事件
+  const handleRemove = useCallback(() => {
+    TimelineApi.deleteDoc(id).then(result => {
+      if (result) {
+        message.success('删除成功');
+      }
+    });
+  }, [id]);
   const onPhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPhoto(event.target.value.trim());
     setPhotoDownloadUrl(getDownloadUrl(event.target.value.trim()));
@@ -91,7 +103,7 @@ const TimelineDeatilScreen = (props: Props) => {
   const onAddCharacter = () => {
     setVisiableAddCharacter(true);
   };
-  const onAddCharacterDrawerSubmit = (characters: CharacterRelationshipDownload[]) => {
+  const onAddCharacterDrawerSubmit = useCallback((characters: CharacterRelationshipDownload[]) => {
     setCharacters(characters.map(c => {
       const _character: Character = {
         id: c.chataId,
@@ -102,7 +114,7 @@ const TimelineDeatilScreen = (props: Props) => {
     setCharactersDownloadUrl(
       Array.from(new Set(charactersDownloadUrl.concat(characters.map(c => c.avator_download_url))))
     );
-  };
+  }, [charactersDownloadUrl]);
   const onDrawerClose = () => {
     setVisiableAddCharacter(false);
   };
@@ -133,7 +145,7 @@ const TimelineDeatilScreen = (props: Props) => {
         <Form.Item
           label="Id"
         >
-          {id}
+          <span>{id}</span>
         </Form.Item>
         <Form.Item
           label="图片"
@@ -165,30 +177,15 @@ const TimelineDeatilScreen = (props: Props) => {
         <Form.Item
           label="标签"
         >
-          {
-            tags.map((t, i) => (
-              <div 
-                key={i}
-                className="tag-item"
-              >
-                <Input 
-                  value={t} 
-                  onChange={onTagChange}
-                  data-index={i}
-                />
-                <Icon 
-                  type="close-circle" 
-                  className="icon" 
-                  onClick={onRemoveTagClick}
-                  data-index={i}
-                />
-              </div>
-            ))
-          }
+          <Tags
+            items={tags}
+            onTagChange={onTagChange}
+            onRemoveTagClick={onRemoveTagClick}
+          />
           <div 
             className="tag-item add-tag"
           >
-            <Button type="dashed" icon="plus-circle" onClick={onAddTagClick}>添加</Button>
+            <Button type="dashed" onClick={onAddTagClick}>添加</Button>
           </div>
         </Form.Item>
         <Form.Item
@@ -212,20 +209,24 @@ const TimelineDeatilScreen = (props: Props) => {
             ))
           }
             <div className="character_item" onClick={onAddCharacter}>
-              <Icon type="plus-circle" />
+              <PlusCircleOutlined />
             </div>
           </div>
         </Form.Item>
         <Form.Item
           wrapperCol={{offset:3}}
         >
-          <Button icon="save" type="primary" onClick={onSaveClick} >保存</Button>
+          <div className='action-box'>
+            <Button className='button' type='primary' onClick={onSaveClick} >保存</Button>
+            <Button className='button' type='danger' onClick={handleRemove}>删除</Button>
+          </div>
         </Form.Item>
       </Form>
       <Drawer
         visible={visiableAddCharacter}
         title="搜索人物"
         onClose={onDrawerClose}
+        width='25%'
       >
           <SearchCharacter 
             characters={characters.map<string>(c => c.id)}

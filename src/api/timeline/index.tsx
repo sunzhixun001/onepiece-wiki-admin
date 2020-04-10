@@ -9,7 +9,6 @@ import {
 import { QueryResult } from '../../interface/common';
 import { Character } from '../../interface/character';
 import { getDownloadUrl } from '../../utils/common';
-import { async } from 'q';
 
 const parse = (text: string): TimelineDownloadPhoto => {
   const obj = JSON.parse(text);
@@ -31,7 +30,11 @@ const parse = (text: string): TimelineDownloadPhoto => {
 };
 
 // 分页获取
-const getTimelineList = async (limit: number, skip: number, keyword: string): Promise<TimelineListResponse> => {
+const getTimelineList = async (
+  limit: number, 
+  skip: number, 
+  keyword: string
+): Promise<TimelineListResponse> => {
   let query = ['db.collection("events")'];
   if ( keyword ) {
     query.push(`
@@ -60,6 +63,13 @@ const getTimelineList = async (limit: number, skip: number, keyword: string): Pr
     ]))
     `.replace(/\s/g, ''))
   }
+  // if (age) {
+  //   query.push(`
+  //     .where(db.command.and([{
+
+  //     }]))
+  //   `);
+  // }
   query.push(".orderBy('age', 'asc')");
   query.push(`.limit(${limit})`);
   query.push(`.skip(${skip})`);
@@ -151,9 +161,20 @@ const result: TimelineListResponse = {
 }
 return result;
 };
+// 删除一条记录
+const deleteDoc = async (id: string): Promise<boolean> => {
+  let deleted: number = 0;
+  try {
+    deleted = await request.del(`db.collection("events").where({_id: '${id}'}).remove()`);
+  } catch (error) {
+
+  }
+  return deleted > 0;
+};
 export {
   addDoc,
   getDoc,
   getTimelineList,
-  updateDoc
+  updateDoc,
+  deleteDoc
 };

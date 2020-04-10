@@ -8,24 +8,26 @@ import {
 } from 'antd';
 import { CharacterBindValue, CharacterRelationship, CharacterRelationshipDownload, Character } from '../../../interface/character';
 import { CharacterApi } from '../../../api';
+import './index.css';
 
 interface Props {
-  // visible: boolean,
-  characters: string[],
-  // close: () => void,
+  characters: string[], 
   ok: (characters: CharacterRelationshipDownload[]) => void
 };
 
-const SearchCharacter = (props: Props) => {
+const SearchCharacter = React.memo((props: Props) => {
+  // 搜索出来的人物列表
   const [searchcharacters, setSearchcharacters] = useState<CharacterBindValue[]>([]);
+
   useEffect(() => {
-    setSearchcharacters(searchcharacters.map(d => {
-      if(props.characters.includes(d.id)) {
-        d.locked = true;
-        d.selected = false;
-      }
-      return d;
-    }));
+    // setSearchcharacters(searchcharacters.map(d => {
+    //   if(props.characters.includes(d.id)) {
+    //     d.locked = true;
+    //     d.selected = false;
+    //   }
+    //   return d;
+    // }));
+    setSearchcharacters([]);
   }, [props.characters]);
   const onSubmit = () => {
     const selected = searchcharacters.filter(c => c.selected).map(c => {
@@ -42,6 +44,7 @@ const SearchCharacter = (props: Props) => {
   const closeModal = () => {
     // props.close();
   };
+  // 搜索点击事件
   const fetchSearchCharacter = (value: string) => {
     CharacterApi.searchCharacterList(value).then(result => {
       console.log(result);
@@ -65,52 +68,44 @@ const SearchCharacter = (props: Props) => {
     }));
   };
   return (
-    // <Modal
-    //   title="搜索人物"
-    //   visible={props.visible}
-    //   onOk={onChooseOK}
-    //   onCancel={closeModal}
-    // >
-    <div>
+    <div className='search-character'>
       <div className="modal-wrap">
-      <Input.Search 
-        placeholder="输入关键字"
-        onSearch={fetchSearchCharacter}
-      />
-        <div className="cw">
-          <Row
-            gutter={[24,24]}
-          >
-            {
-              searchcharacters.map(c => (
-                <Col 
-                  className={`${!c.locked && c.selected ? "checked":""} ${c.locked ? "locked": ""}`}
-                  key={c.id}
-                  span={12}
-                >
-                  <div className="image-box">
-                    <img 
-                      src={c.download_url}
-                      onClick={c.locked ? undefined:onCharacterClick } 
-                      data-id={c.id}
-                    />
-                  </div>
-                </Col>
-              ))
-            }
-          </Row>
-          <Row>
-            <Col>
-            <Button type="primary" onClick={onSubmit}>
-              确定
-            </Button>
-            </Col>
-          </Row>
+      <div className='form'>
+        <Input.Search
+          placeholder="输入关键字"
+          onSearch={fetchSearchCharacter}
+        />
+      </div>
+        <div
+          className='item-list'
+        >
+          {
+            searchcharacters.map(c => (
+              <div 
+                className={`${!c.locked && c.selected ? "checked":""} ${c.locked ? "locked": ""} item`}
+                key={c.id}
+              >
+                <div className="image-box">
+                  <img 
+                    className='img'
+                    src={c.download_url}
+                    onClick={c.locked ? undefined:onCharacterClick } 
+                    data-id={c.id}
+                  />
+                </div>
+              </div>
+            ))
+          }
+        </div>
+        <div>
+          <Button type="primary" onClick={onSubmit}>
+            确定
+          </Button>
         </div>
       </div>
     </div>
     // </Modal>
   ); 
-};
+});
 
 export default SearchCharacter;

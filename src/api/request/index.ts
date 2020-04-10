@@ -41,6 +41,11 @@ interface UpdateResponseValue {
     modified: number,   // 修改的记录数，注意：使用set操作新插入的数据不计入修改数目
     id: string          // 新插入记录的id，注意：只有使用set操作新插入数据时这个字段会有值
 };
+interface DeleteResponseValue {
+    errcode: number,	// 错误码
+    errmsg:	string,	    // 错误信息
+    deleted: number,    // 删除记录数量
+};
 interface AddResposneValue {
     errcode: number	        // 错误码
     errmsg: string	        // 错误信息
@@ -131,6 +136,15 @@ const update = async (query: string): Promise<number> => {
     }
     return modified;
 };
+const del = async (query: string): Promise<number> => {
+    const response = await requestApi<DeleteResponseValue>("/tcb/databasedelete", query);
+    const { deleted, errcode, errmsg } = response;
+    if( errcode ) {
+        message.error(errcodes.get(errcode) || `${errcode}: ${errmsg}`);
+        throw new Error(errmsg);
+    }
+    return deleted;
+};
 const add = async (query: string): Promise<string[]> => {
     const response = await requestApi<AddResposneValue>("/tcb/databaseadd", query);
     const { id_list, errcode, errmsg } = response;
@@ -147,5 +161,6 @@ export default {
     get,
     post,
     query,
-    update
+    update,
+    del
 };

@@ -7,9 +7,11 @@ import {
   Row,
   Col,
   Input,
-  Icon,
   message
 } from 'antd';
+import {
+  CloseCircleOutlined
+} from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import TimelineDeatilScreen from '../detail';
 import './index.css';
@@ -89,7 +91,7 @@ const TimelineListScreen = () => {
       <Row>
         <Col span={8}>
           <Input.Search 
-            addonBefore={<Icon type="plus" onClick={addClick} />}
+            addonBefore={<CloseCircleOutlined onClick={addClick} />}
             onSearch={search}
             onChange={onSearchChange}
             value={keyword}
@@ -116,7 +118,12 @@ const TimelineListScreen = () => {
               title={item.age}
               description={item.showAge}
             />
-            {item.title}
+              <Row>
+                <Col span={8}>{item.title}</Col>
+                <Col span={8}>
+                  {item.tags && item.tags[0]}
+                </Col>
+              </Row>
           </List.Item>
         )}
       />

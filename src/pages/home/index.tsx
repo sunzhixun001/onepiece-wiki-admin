@@ -20,7 +20,6 @@ const App: React.FC<RouteConfigComponentProps<any>> = ({ route }) => {
             theme="dark"
             mode="horizontal"
           >
-            <Menu.Item><Link to="/wiki">wiki</Link></Menu.Item>
             <Menu.Item><Link to="/timeline">时间线</Link></Menu.Item>
             <Menu.Item><Link to="/character">人物</Link></Menu.Item>
           </Menu>

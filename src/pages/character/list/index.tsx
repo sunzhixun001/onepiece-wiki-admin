@@ -10,9 +10,11 @@ import {
   Col,
   Table,
   Button,
-  Icon,
   message
 } from 'antd';
+import {
+  CloseCircleOutlined
+} from '@ant-design/icons';
 import { CharacterSearchResponseValue, CharacterDetail, CharacterDetailShowEmpty, CharacterDetailShow } from '../../../interface/character';
 import { Link } from 'react-router-dom';
 import { renderRoutes, RouteConfig, RouteConfigComponentProps } from 'react-router-config';
@@ -80,7 +82,7 @@ const CharacterListScreen: React.FC<RouteConfigComponentProps<any>> = ({ route }
               <Col span={9}>
                 <Input.Search 
                   enterButton="搜索"
-                  addonBefore={<Icon type="plus-circle" onClick={onAddClick} />}
+                  addonBefore={<CloseCircleOutlined onClick={onAddClick} />}
                   onSearch={onSearch}
                 />
               </Col>
@@ -94,7 +96,7 @@ const CharacterListScreen: React.FC<RouteConfigComponentProps<any>> = ({ route }
             // itemLayout="horizontal"
             dataSource={characters}
             columns={[{
-              title: '头像111',
+              title: '头像',
               dataIndex: 'download_url',
               render: url => <Avatar src={url}/>
             }, {

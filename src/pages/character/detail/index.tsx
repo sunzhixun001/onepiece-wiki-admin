@@ -6,7 +6,6 @@ import {
   Form,
   Input,
   Radio,
-  Icon,
   Button,
   message,
   Row,
@@ -14,6 +13,9 @@ import {
   Avatar,
   Select
 } from 'antd';
+import {
+  CloseCircleOutlined
+} from '@ant-design/icons';
 import "./index.css";
 import { RadioChangeEvent } from 'antd/lib/radio/interface';
 import { getDownloadUrl } from '../../../utils/common';
@@ -346,7 +348,7 @@ const CharacterDetailScreen = (props: Props) => {
             group.map((g, i) => (
               <div key={i} className="group-item">
                 <Input value={g} onChange={onGroupChange} data-index={i} />
-                <Icon type="close-circle" onClick={onRemoveGroupClick} data-index={i} />
+                <CloseCircleOutlined onClick={onRemoveGroupClick} data-index={i} />
               </div>
             ))
           }
@@ -361,7 +363,7 @@ const CharacterDetailScreen = (props: Props) => {
               relationshipsDownloadUrl.map((r, i) => (
                 <div key={r.chataId} className="relationship-item">
                   <Input.Group size="large">
-                    <Row gutter={8} type="flex">
+                    <Row gutter={8}>
                       <Col span={5}>
                         <Input value={r.type} onChange={onRelationshipChange} data-id={r.chataId} />
                       </Col>
@@ -369,7 +371,7 @@ const CharacterDetailScreen = (props: Props) => {
                         <Avatar src={r.avator_download_url} />
                       </Col>
                       <Col span={3}>
-                        <Icon type="close-circle" onClick={onRemoveRelationshipClick} data-id={r.chataId} />
+                        <CloseCircleOutlined onClick={onRemoveRelationshipClick} data-id={r.chataId} />
                       </Col>
                     </Row>
                   </Input.Group>
@@ -377,7 +379,7 @@ const CharacterDetailScreen = (props: Props) => {
               ))
             }
             <div className="relationship-item add-relationship">
-              <Row gutter={8} type="flex">
+              <Row gutter={8}>
                 <Col span={11}>
                   <Button onClick={onAddRelationshipClick}>添加</Button>
                 </Col>
